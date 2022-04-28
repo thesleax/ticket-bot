@@ -1,0 +1,16 @@
+{
+  "name": "ticket-bot",
+  "version": "0.0.1",
+  "description": "Discord Ticket Bot",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Sleax",
+  "license": "MIT",
+  "dependencies": {
+    "discord-modals": "^1.3.5",
+    "discord.js": "^13.6.0"
+  }
+}
