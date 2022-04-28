@@ -1,0 +1,57 @@
+export default {
+  PREFIX: "",
+  TOKEN: "",
+  MONGO_URL: "",
+  ACTIVITY: { NAME: "", TYPE: "PLAYING" },
+  GUILD_ID: "",
+  TICKET: {
+    CHANNEL: "",
+    CATEGORY: "",
+    STAFF_ROLES: [],
+    ARCHIVE_CHANNEL: "",
+    MESSAGE: "",
+    BUTTONS: [
+      {
+        STYLE: "SUCCESS",
+        LABEL: "Confirm Ticket",
+        EMOTE: "",
+        ID: "successTicket",
+        DISABLED: false,
+      },
+      {
+        STYLE: "SECONDARY",
+        LABEL: "Archive Ticket",
+        EMOTE: "",
+        ID: "archiveTicket",
+        DISABLED: false,
+      },
+      {
+        STYLE: "DANGER",
+        LABEL: "Delete Ticket",
+        EMOTE: "",
+        ID: "deleteTicket",
+        DISABLED: false,
+      },
+    ],
+    QUESTIONS: [
+      {
+        ID: "name",
+        LABEL: "What is your name?",
+        STYLE: "SHORT",
+        MIN_LENGTH: 4,
+        MAX_LENGTH: 16,
+        PLACE_HOLDER: "You can write your name.",
+        REQUIRED: true,
+      },
+      {
+        ID: "age",
+        LABEL: "How old are you?",
+        STYLE: "SHORT",
+        MIN_LENGTH: 3,
+        MAX_LENGTH: 16,
+        PLACE_HOLDER: "You can write your age.",
+        REQUIRED: true,
+      },
+    ],
+  },
+};
