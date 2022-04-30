@@ -1,7 +1,6 @@
 export default {
   PREFIX: "",
   TOKEN: "",
-  MONGO_URL: "",
   ACTIVITY: { NAME: "", TYPE: "PLAYING" },
   GUILD_ID: "",
   TICKET: {
