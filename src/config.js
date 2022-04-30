@@ -6,9 +6,9 @@ export default {
   TICKET: {
     CHANNEL: "",
     CATEGORY: "",
-    STAFF_ROLES: [],
-    ARCHIVE_CHANNEL: "",
+    ARCHIVE_CATEGORY: "",
     MESSAGE: "",
+    STAFF_ROLES: [],
     BUTTONS: [
       {
         STYLE: "SUCCESS",
