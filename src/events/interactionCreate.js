@@ -14,6 +14,8 @@ export default (Bot) => {
     }
 
     if (interaction.customId === "successTicket") {
+      await interaction.deferReply({ ephemeral: true });
+
       if (
         !Config.TICKET.STAFF_ROLES.some((x) =>
           interaction.member.roles.cache.has(x)
