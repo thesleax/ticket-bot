@@ -58,14 +58,15 @@ export default (Bot) => {
             });
 
             modal.followUp({
-              content: "Heyy! başarıyla ticket talebin oluşturuldu.",
+              content:
+                "Hey! Your ticket request has been successfully created.",
               ephemeral: true,
             });
 
             Channel.send({
               embeds: [
                 Utils.embed(
-                  `Ticket Oluşturan Üye Bilgileri: \n${modal.user} (\`${modal.user.id}\`) \n${Content}`,
+                  `Ticket Creator Member Information: \n${modal.user} (\`${modal.user.id}\`) \n${Content}`,
                   modal.guild,
                   Bot,
                   modal.user
