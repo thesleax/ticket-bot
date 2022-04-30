@@ -23,7 +23,7 @@ export default (Bot) => {
 
       if (Channel) {
         modal.followUp({
-          content: `Zaten bir ticket talebin bulunuyor.`,
+          content: `You already have a ticket request.`,
           ephemeral: true,
         });
       } else {
