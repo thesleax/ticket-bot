@@ -33,6 +33,11 @@ export default (Bot) => {
         components: interaction.message.components,
       });
 
+      interaction.followUp({
+        content: `The ticket has been successfully approved.`,
+        ephemeral: true,
+      });
+
       interaction.channel
         .send({
           content: `Heyy! <@!${interaction.channel.name.replace(
