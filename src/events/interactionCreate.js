@@ -55,14 +55,14 @@ export default (Bot) => {
           ephemeral: true,
         });
 
-      if (interaction.channel.parentId === Config.TICKET.ARCHIVE_CHANNEL)
+      if (interaction.channel.parentId === Config.TICKET.ARCHIVE_CATEGORY)
         return interaction.followUp({
           content: `This ticket is already archived.`,
           ephemeral: true,
         });
 
       let Parent = interaction.guild.channels.cache.get(
-        Config.TICKET.ARCHIVE_CHANNEL
+        Config.TICKET.ARCHIVE_CATEGORY
       );
 
       interaction.channel.permissionOverwrites.delete(
