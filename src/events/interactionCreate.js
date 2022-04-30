@@ -98,7 +98,7 @@ export default (Bot) => {
 
       const User = interaction.channel.name.replace("ticket-", "");
 
-      if (User !== interaction.channel.id)
+      if (User !== interaction.user.id)
         return interaction.followUp({
           content: `You don't own the ticket.`,
           ephemeral: true,
