@@ -27,36 +27,39 @@ export default (Bot) => {
           ephemeral: true,
         });
       } else {
+        let PermissionsArray = [
+          {
+            id: modal.user.id,
+            allow: [
+              Permissions.FLAGS.VIEW_CHANNEL,
+              Permissions.FLAGS.READ_MESSAGE_HISTORY,
+              Permissions.FLAGS.SEND_MESSAGES,
+            ],
+          },
+          {
+            id: modal.guild.id,
+            deny: [Permissions.FLAGS.VIEW_CHANNEL],
+          },
+        ];
+
+        Config.TICKET.STAFF_ROLES.map((x) => {
+          PermissionsArray.push({
+            id: x,
+            allow: [
+              Permissions.FLAGS.VIEW_CHANNEL,
+              Permissions.FLAGS.READ_MESSAGE_HISTORY,
+              Permissions.FLAGS.SEND_MESSAGES,
+            ],
+          });
+        });
+
         modal.guild.channels
           .create("ticket" + "-" + modal.user.id, {
             type: "GUILD_TEXT",
             parent: Config.TICKET.CATEGORY,
-            permissionOverwrites: [
-              {
-                id: modal.user.id,
-                allow: [
-                  Permissions.FLAGS.VIEW_CHANNEL,
-                  Permissions.FLAGS.READ_MESSAGE_HISTORY,
-                  Permissions.FLAGS.SEND_MESSAGES,
-                ],
-              },
-              {
-                id: modal.guild.id,
-                deny: [Permissions.FLAGS.VIEW_CHANNEL],
-              },
-            ],
+            permissionOverwrites: PermissionsArray,
           })
           .then(async (Channel) => {
-            Config.TICKET.STAFF_ROLES.map((x, index) => {
-              setTimeout(() => {
-                Channel.permissionOverwrites.edit(x, {
-                  VIEW_CHANNEL: true,
-                  READ_MESSAGE_HISTORY: true,
-                  SEND_MESSAGES: true,
-                });
-              }, index * 3000);
-            });
-
             modal.followUp({
               content:
                 "Hey! Your ticket request has been successfully created.",
