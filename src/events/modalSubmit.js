@@ -10,7 +10,7 @@ export default (Bot) => {
       let Output = Value.map((x, i) => ({ Questions: Questions[i], Value: x }));
       let Content = Output.map(
         (x, index) =>
-          `\n\`Soru ${index + 1}:\` **${x.Questions}** \n\`Cevap:\` **${
+          `\n\`Question ${index + 1}:\` **${x.Questions}** \n\`Reply:\` **${
             x.Value
           }**`
       ).join("\n");
