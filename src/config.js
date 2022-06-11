@@ -46,7 +46,7 @@ export default {
         ID: "age",
         LABEL: "How old are you?",
         STYLE: "SHORT",
-        MIN_LENGTH: 4,
+        MIN_LENGTH: 3,
         MAX_LENGTH: 16,
         PLACE_HOLDER: "You can write your age.",
         REQUIRED: true,
