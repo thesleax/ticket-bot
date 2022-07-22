@@ -36,12 +36,12 @@ class Utils {
         text: Bot.user.username,
         iconURL: Bot.user.avatarURL({ dynamic: true }),
       })
-      .setTimestamp();
-    if (User) {
-      Embed.setThumbnail(User.avatarURL({ dynamic: true }));
-    } else {
-      Embed.setThumbnail(Guild.iconURL({ dynamic: true }));
-    }
+      .setTimestamp()
+      .setThumbnail(
+        User
+          ? User.avatarURL({ dynamic: true })
+          : Guild.iconURL({ dynamic: true })
+      );
 
     return Embed;
   }
