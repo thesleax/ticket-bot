@@ -1,6 +1,13 @@
 import Fs from "fs";
-import { MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
-import { Modal, TextInputComponent } from "discord-modals";
+import Discord from "discord.js";
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  TextInputBuilder,
+  ModalBuilder,
+  Colors,
+} = Discord;
 import Config from "../config.js";
 class Utils {
   static login(Bot) {
@@ -18,13 +25,13 @@ class Utils {
   }
 
   static embed(Content, Guild, Bot, User) {
-    const Embed = new MessageEmbed()
+    const Embed = new EmbedBuilder()
       .setAuthor({
         name: `${Guild.name} Ticket System`,
         iconURL: Guild.iconURL({ dynamic: true }),
       })
-      .setColor("RANDOM")
       .setDescription(Content)
+      .setColor(Colors.DarkNavy)
       .setFooter({
         text: Bot.user.username,
         iconURL: Bot.user.avatarURL({ dynamic: true }),
@@ -40,8 +47,8 @@ class Utils {
   }
 
   static button(Style, Label, Emoji, Id, Disabled) {
-    const Row = new MessageActionRow().addComponents(
-      new MessageButton()
+    const Row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
         .setCustomId(Id)
         .setLabel(Label)
         .setStyle(Style)
@@ -56,7 +63,7 @@ class Utils {
     let Buttons = [];
 
     Config.TICKET.BUTTONS.map((x) => {
-      const Button = new MessageButton()
+      const Button = new ButtonBuilder()
         .setCustomId(x.ID)
         .setLabel(x.LABEL)
         .setStyle(x.STYLE)
@@ -66,7 +73,7 @@ class Utils {
       Buttons.push(Button);
     });
 
-    let Row = new MessageActionRow().addComponents(Buttons);
+    let Row = new ActionRowBuilder().addComponents(Buttons);
 
     return Row;
   }
@@ -75,7 +82,7 @@ class Utils {
     let Inputs = [];
 
     Config.TICKET.QUESTIONS.map((v) => {
-      const Input = new TextInputComponent()
+      const Input = new TextInputBuilder()
         .setCustomId(v.ID)
         .setLabel(v.LABEL)
         .setStyle(v.STYLE)
@@ -87,10 +94,13 @@ class Utils {
       Inputs.push(Input);
     });
 
-    let Modals = new Modal()
+    let Modals = new ModalBuilder()
       .setCustomId("ticket")
-      .setTitle("Ticket Creation Request")
-      .addComponents(Inputs);
+      .setTitle("Ticket Creation Request");
+
+    let Row = [];
+    Inputs.map((x) => Row.push(new ActionRowBuilder().addComponents([x])));
+    Modals.addComponents(Row);
 
     return Modals;
   }
