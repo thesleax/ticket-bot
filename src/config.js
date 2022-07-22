@@ -1,3 +1,6 @@
+import Discord from "discord.js";
+const { ButtonStyle, TextInputStyle } = Discord;
+
 export default {
   PREFIX: "",
   TOKEN: "",
@@ -7,27 +10,27 @@ export default {
     CHANNEL: "",
     CATEGORY: "",
     ARCHIVE_CATEGORY: "",
-    MESSAGE: "",
+    MESSAGE: "Click to create ticket!",
     STAFF_ROLES: [],
     BUTTONS: [
       {
-        STYLE: "SUCCESS",
+        STYLE: ButtonStyle.Success,
         LABEL: "Confirm Ticket",
-        EMOTE: "",
+        EMOTE: "✅",
         ID: "successTicket",
         DISABLED: false,
       },
       {
-        STYLE: "SECONDARY",
+        STYLE: ButtonStyle.Secondary,
         LABEL: "Archive Ticket",
-        EMOTE: "",
+        EMOTE: "🎫",
         ID: "archiveTicket",
         DISABLED: false,
       },
       {
-        STYLE: "DANGER",
+        STYLE: ButtonStyle.Danger,
         LABEL: "Delete Ticket",
-        EMOTE: "",
+        EMOTE: "🎟️",
         ID: "deleteTicket",
         DISABLED: false,
       },
@@ -36,7 +39,7 @@ export default {
       {
         ID: "name",
         LABEL: "What is your name?",
-        STYLE: "SHORT",
+        STYLE: TextInputStyle.Short,
         MIN_LENGTH: 4,
         MAX_LENGTH: 16,
         PLACE_HOLDER: "You can write your name.",
@@ -45,7 +48,7 @@ export default {
       {
         ID: "age",
         LABEL: "How old are you?",
-        STYLE: "SHORT",
+        STYLE: TextInputStyle.Short,
         MIN_LENGTH: 3,
         MAX_LENGTH: 16,
         PLACE_HOLDER: "You can write your age.",

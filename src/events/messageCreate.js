@@ -1,5 +1,7 @@
 import Utils from "../utils/utils.js";
 import Config from "../config.js";
+import Discord from "discord.js";
+const { ButtonStyle } = Discord;
 
 export default (Bot) => {
   Bot.on("messageCreate", (message) => {
@@ -18,7 +20,13 @@ export default (Bot) => {
       message.channel.send({
         embeds: [Utils.embed(Config.TICKET.MESSAGE, message.guild, Bot, "")],
         components: [
-          Utils.button("PRIMARY", "Open Ticket!", "🎫", "ticket", false),
+          Utils.button(
+            ButtonStyle.Primary,
+            "Open Ticket!",
+            "🎫",
+            "ticket",
+            false
+          ),
         ],
       });
     }
