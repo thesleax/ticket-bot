@@ -14,4 +14,4 @@
 
 #### 3 - After installing the modules, fill in the `config.js` file.
 
-#### 4 - After doing the above 3 items, open a terminal in the folder and type `node .` then your bot will run actively. (Instead of opening a terminal, you can create a .bat file and type the command you will type in the terminal.)
+#### 4 - After doing the above 3 items, open a terminal in the folder and type `node src/index.js` then your bot will run actively. (Instead of opening a terminal, you can create a .bat file and type the command you will type in the terminal.)
