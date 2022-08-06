@@ -137,7 +137,7 @@ export default (Bot) => {
                 ),
                 ButtonBuilder.from(
                   interaction.message.components[0].components[2]
-                ),
+                ).setDisabled(true),
               ],
             }),
           ],
