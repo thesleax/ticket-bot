@@ -137,7 +137,7 @@ export default (Bot) => {
                 ),
                 ButtonBuilder.from(
                   interaction.message.components[0].components[2]
-                ).setDisabled(true),
+                ),
               ],
             }),
           ],
@@ -216,16 +216,23 @@ export default (Bot) => {
 
       let User = interaction.channel.name.replace("ticket-", "");
 
-      if (
-        !Config.TICKET.STAFF_ROLES.some((x) =>
-          interaction.member.roles.cache.has(x)
-        ) &&
-        ![interaction.guild.ownerId, User].includes(interaction.user.id)
-      )
-        return interaction.followUp({
-          content: `Only authorities can use the ticket deletion system.`,
-          ephemeral: true,
-        });
+      if ([User].includes(interaction.user.id)) {
+        if (
+          interaction.message.components[0].components[0].data.disabled === true
+        )
+          return interaction.followUp({
+            content: `The support request has been approved by the authorities, you can no longer delete it.`,
+            ephemeral: true,
+          });
+      } else {
+        if (
+          !Config.TICKET.STAFF_ROLES.some((x) =>
+            interaction.member.roles.cache.has(x)
+          ) &&
+          ![interaction.guild.ownerId].includes(interaction.user.id)
+        )
+          return;
+      }
 
       interaction.followUp({
         content: `Your request has been received successfully after \`5 seconds\` the channel will be deleted automatically.`,
