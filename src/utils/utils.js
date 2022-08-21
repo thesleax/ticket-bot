@@ -11,7 +11,7 @@ const {
 import Config from "../config.js";
 class Utils {
   static login(Bot) {
-    Bot.login(Config.TOKEN)
+    Bot.login(Config.TOKEN ? Config.TOKEN : process.env.TOKEN)
       .then(() => console.log("[BOT] Ticket bot active."))
       .catch((err) => console.log("" + err));
   }
