@@ -7,8 +7,7 @@ export default (Bot) => {
   Bot.on("messageCreate", (message) => {
     const Prefix = message.content.toLowerCase().startsWith(Config.PREFIX);
 
-    if (!Prefix) return;
-    if (!message.guild) return;
+    if (!Prefix && !message.guild) return;
 
     const Args = message.content.split(" ").slice(1);
     const Command = message.content.split(" ")[0].slice(Config.PREFIX.length);
