@@ -15,20 +15,28 @@ export default (Bot) => {
     if (Command === "ticket") {
       if (message.author.id !== message.guild.ownerId) return;
 
-      message.delete();
+      const TicketChannel = message.guild.channels.cache.get(
+        Config.TICKET.CHANNEL
+      );
 
-      message.channel.send({
-        embeds: [Utils.embed(Config.TICKET.MESSAGE, message.guild, Bot, "")],
-        components: [
-          Utils.button(
-            ButtonStyle.Primary,
-            "Open Ticket!",
-            "🎫",
-            "ticket",
-            false
-          ),
-        ],
+      message.delete().catch(() => {
+        return undefined;
       });
+
+      if (TicketChannel) {
+        TicketChannel.send({
+          embeds: [Utils.embed(Config.TICKET.MESSAGE, message.guild, Bot, "")],
+          components: [
+            Utils.button(
+              ButtonStyle.Primary,
+              "Open Ticket!",
+              "🎫",
+              "ticket",
+              false
+            ),
+          ],
+        });
+      }
     }
   });
 };
