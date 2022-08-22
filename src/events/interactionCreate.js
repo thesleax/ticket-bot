@@ -88,7 +88,7 @@ export default (Bot) => {
               });
 
               Channel.send({
-                content: `<@${interaction.user.id}>`,
+                content: `${interaction.user}`,
                 embeds: [
                   Utils.embed(
                     `Ticket Creator Member Information: \n${interaction.user} (\`${interaction.user.id}\`) \n${Content}`,
