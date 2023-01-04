@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/index.js"
   },
-  "author": "Sleax",
+  "author": "feyit#9316",
   "license": "MIT",
   "dependencies": {
     "discord.js": "14.0.2"
