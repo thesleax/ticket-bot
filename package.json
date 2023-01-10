@@ -1,7 +1,7 @@
 {
   "name": "ticket-bot",
   "version": "0.0.2",
-  "description": "Discord Ticket Bot",
+  "description": "Discord Modals Simple Ticket Bot",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
