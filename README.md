@@ -8,7 +8,7 @@
 
 #### Hey now there's a video to use the bot you can watch: https://youtu.be/gv94bxO-jo0
 
-#### Note: You must have Node.js version 16.9.0 or higher installed on your computer. (Download link if not installed https://nodejs.org)
+#### Note: You must have Node.js installed on your computer. (Download link if not installed https://nodejs.org)
 
 #### 1 - Open a terminal and type `npm install yarn --g` and wait for it to install.
 
