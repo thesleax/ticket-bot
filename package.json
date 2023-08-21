@@ -10,6 +10,6 @@
   "author": "feyit#9316",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "14.12.1"
+    "discord.js": "14.13.0"
   }
 }
