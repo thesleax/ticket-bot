@@ -53,8 +53,8 @@ export default (Bot) => {
               allow: [
                 PermissionFlagsBits.ViewChannel,
                 PermissionFlagsBits.ReadMessageHistory,
-                PermissionFlagsBits.SendMessages,
               ],
+              deny: [PermissionFlagsBits.SendMessages],
             },
             {
               id: interaction.guild.id,
@@ -142,6 +142,11 @@ export default (Bot) => {
             }),
           ],
         });
+
+        interaction.channel.permissionOverwrites.edit(
+          interaction.channel.name.replace("ticket-", ""),
+          { SendMessages: true }
+        );
 
         interaction.followUp({
           content: `The ticket has been successfully approved.`,
