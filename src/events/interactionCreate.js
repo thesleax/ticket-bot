@@ -7,6 +7,7 @@ const {
   PermissionFlagsBits,
   InteractionType,
   ChannelType,
+  MessageFlags,
 } = Discord;
 
 export default (Bot) => {
@@ -39,12 +40,12 @@ export default (Bot) => {
           (x) => x.name === "ticket" + "-" + interaction.user.id
         );
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         if (Channel) {
           interaction.followUp({
             content: `You already have a ticket request.`,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           });
         } else {
           let PermissionsArray = [
@@ -84,7 +85,7 @@ export default (Bot) => {
               interaction.followUp({
                 content:
                   "Hey! Your ticket request has been successfully created.",
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
               });
 
               Channel.send({
@@ -116,11 +117,11 @@ export default (Bot) => {
         ) &&
         ![interaction.guild.ownerId].includes(interaction.user.id)
       ) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         interaction.followUp({
           content: `Only authorities can use the ticket validation system.`,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
 
         return;
@@ -150,7 +151,7 @@ export default (Bot) => {
 
         interaction.followUp({
           content: `The ticket has been successfully approved.`,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
 
         interaction.channel.send({
@@ -165,7 +166,7 @@ export default (Bot) => {
     }
 
     if (interaction.customId === "archiveTicket") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
       if (
         !Config.TICKET.STAFF_ROLES.some((x) =>
@@ -175,13 +176,13 @@ export default (Bot) => {
       )
         return interaction.followUp({
           content: `Only authorities can use the ticket archive system.`,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
 
       if (interaction.channel.parentId === Config.TICKET.ARCHIVE_CATEGORY)
         return interaction.followUp({
           content: `This ticket is already archived.`,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
 
       let Parent = interaction.guild.channels.cache.get(
@@ -211,13 +212,13 @@ export default (Bot) => {
 
           interaction.followUp({
             content: `Ticket successfully archived.`,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           });
         });
     }
 
     if (interaction.customId === "deleteTicket") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
       let User = interaction.channel.name.replace("ticket-", "");
 
@@ -227,7 +228,7 @@ export default (Bot) => {
         )
           return interaction.followUp({
             content: `The support request has been approved by the authorities, you can no longer delete it.`,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           });
       } else {
         if (
@@ -241,7 +242,7 @@ export default (Bot) => {
 
       interaction.followUp({
         content: `Your request has been received successfully after \`5 seconds\` the channel will be deleted automatically.`,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
 
       setTimeout(() => {
