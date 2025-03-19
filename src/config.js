@@ -4,14 +4,18 @@ const { ButtonStyle, TextInputStyle } = Discord;
 export default {
   PREFIX: "",
   TOKEN: "",
-  ACTIVITY: { NAME: "", TYPE: "PLAYING" },
+  PRESENCE: {
+    NAME: "",
+    TYPE: "PLAYING" /* 'PLAYING', 'STREAMING', 'LISTENING', 'WATCHING', 'COMPETING' */,
+    STATUS: "dnd" /* 'online', 'idle', 'dnd', 'offline' */,
+  },
   GUILD_ID: "",
   TICKET: {
     CHANNEL: "",
     CATEGORY: "",
     ARCHIVE_CATEGORY: "",
     MESSAGE: "Click to create ticket!",
-    STAFF_ROLES: [],
+    STAFF_ROLES: [] /* ["ROLE_ID", "ROLE_ID"] */,
     BUTTONS: [
       {
         STYLE: ButtonStyle.Success,
@@ -40,7 +44,7 @@ export default {
         ID: "name",
         LABEL: "What is your name?",
         STYLE: TextInputStyle.Short,
-        MIN_LENGTH: 0,
+        MIN_LENGTH: 1,
         MAX_LENGTH: 16,
         PLACE_HOLDER: "You can write your name.",
         REQUIRED: true,
@@ -49,8 +53,8 @@ export default {
         ID: "age",
         LABEL: "How old are you?",
         STYLE: TextInputStyle.Short,
-        MIN_LENGTH: 0,
-        MAX_LENGTH: 16,
+        MIN_LENGTH: 1,
+        MAX_LENGTH: 2,
         PLACE_HOLDER: "You can write your age.",
         REQUIRED: true,
       },
