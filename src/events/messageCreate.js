@@ -1,7 +1,7 @@
 import Utils from "../utils/utils.js";
 import Config from "../config.js";
 import Discord from "discord.js";
-const { ButtonStyle } = Discord;
+const { ButtonStyle, PermissionsBitField } = Discord;
 
 export default (Bot) => {
   Bot.on("messageCreate", (message) => {
@@ -13,7 +13,9 @@ export default (Bot) => {
     const Command = message.content.split(" ")[0].slice(Config.PREFIX.length);
 
     if (Command === "ticket") {
-      if (!message.member.permissions.has("0x0000000000000008"))
+      if (
+        !message.member.permissions.has(PermissionsBitField.Flags.Administrator)
+      )
         return message.reply({
           content: "You are not permissions to use this command.",
         });
