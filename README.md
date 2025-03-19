@@ -1,19 +1,30 @@
-### 🎫 Discord Modals Simple Ticket Bot:
+# 🎫 Discord Modals Simple Ticket Bot
 
-#### Again, a bot infrastructure I made in my spare time, I actually made it for my own server, but I thought and shared it with people, I hope it can be useful for you, good coding.
+This is a bot infrastructure I created in my spare time. Initially, I made it for my own server, but I decided to share it with the community in hopes that it will be useful to others. Happy coding!
 
-<hr />
+## 🚀 Setup Guide
+Now, there's a video tutorial to help you set up the bot! Watch it here: [YouTube](https://youtu.be/gv94bxO-jo0)
 
-### Setup:
+### Prerequisites
+📌 You must have **Node.js** installed on your computer. If you haven't installed it yet, download it from [here](https://nodejs.org).
 
-#### Hey now there's a video to use the bot you can watch: https://youtu.be/gv94bxO-jo0
+### Installation Steps
+1️⃣ Open a terminal and run:
+   ```sh
+   npm install -g yarn
+   ```
+   This will install Yarn globally.
 
-#### Note: You must have Node.js installed on your computer. (Download link if not installed https://nodejs.org)
+2️⃣ Navigate to the bot’s directory, open a terminal, and install the required modules:
+   ```sh
+   yarn install
+   ```
 
-#### 1 - Open a terminal and type `npm install yarn --g` and wait for it to install.
+3️⃣ Open the **config.js** file and fill in the necessary details.
 
-#### 2 - Open terminal in infrastructure file, type `yarn install` and install all necessary modules.
+4️⃣ Once everything is set up, start the bot by running:
+   ```sh
+   node src/index.js
+   ```
+   Alternatively, you can create a `.bat` file with the command above to start the bot without opening a terminal.
 
-#### 3 - After installing the modules, fill in the `config.js` file.
-
-#### 4 - After doing the above 3 items, open a terminal in the folder and type `node src/index.js` then your bot will run actively. (Instead of opening a terminal, you can create a .bat file and type the command you will type in the terminal.)
