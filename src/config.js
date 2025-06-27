@@ -2,18 +2,18 @@ import Discord from "discord.js";
 const { ButtonStyle, TextInputStyle } = Discord;
 
 export default {
-  PREFIX: "",
+  PREFIX: "" /* "!", ".", "-" */,
   TOKEN: "",
   PRESENCE: {
-    NAME: "",
-    TYPE: "PLAYING" /* 'PLAYING', 'STREAMING', 'LISTENING', 'WATCHING', 'COMPETING' */,
-    STATUS: "dnd" /* 'online', 'idle', 'dnd', 'offline' */,
+    NAME: "" /* "Hi" */, 
+    TYPE: "PLAYING" /* "PLAYING", "STREAMING", "LISTENING", "WATCHING", "COMPETING" */,
+    STATUS: "dnd" /* "online", "idle", "dnd", "offline" */,
   },
   GUILD_ID: "",
   TICKET: {
-    CHANNEL: "",
-    CATEGORY: "",
-    ARCHIVE_CATEGORY: "",
+    CHANNEL: "" /* "ID" */,
+    CATEGORY: "" /* "ID" */,
+    ARCHIVE_CATEGORY: "" /* "ID" */,
     MESSAGE: "Click to create ticket!",
     STAFF_ROLES: [] /* ["ROLE_ID", "ROLE_ID"] */,
     BUTTONS: [
