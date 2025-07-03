@@ -5,9 +5,9 @@ export default {
   PREFIX: "" /* "!", ".", "-" */,
   TOKEN: "",
   PRESENCE: {
-    NAME: "" /* "Hi" */, 
-    TYPE: "PLAYING" /* "PLAYING", "STREAMING", "LISTENING", "WATCHING", "COMPETING" */,
-    STATUS: "dnd" /* "online", "idle", "dnd", "offline" */,
+    NAME: "" /* "Hi" */,
+    TYPE: "Playing" /* "Playing", "Streaming", "Listening", "Watching", "Competing", "Custom" */,
+    STATUS: "idle" /* "online", "idle", "dnd", "offline" */,
   },
   GUILD_ID: "",
   TICKET: {
@@ -15,6 +15,7 @@ export default {
     CATEGORY: "" /* "ID" */,
     ARCHIVE_CATEGORY: "" /* "ID" */,
     MESSAGE: "Click to create ticket!",
+    SHOW_MODAL: false /* Set to false to create ticket directly without showing modal */,
     STAFF_ROLES: [] /* ["ROLE_ID", "ROLE_ID"] */,
     BUTTONS: [
       {
@@ -53,7 +54,7 @@ export default {
         ID: "age",
         LABEL: "How old are you?",
         STYLE: TextInputStyle.Short,
-        MIN_LENGTH: 1,
+        MIN_LENGTH: 2,
         MAX_LENGTH: 2,
         PLACE_HOLDER: "You can write your age.",
         REQUIRED: true,
