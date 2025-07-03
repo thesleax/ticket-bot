@@ -275,7 +275,6 @@ export default (Bot) => {
         .then(async (x) => {
           x.setName(interaction.channel.name.replace("ticket", "archive"));
 
-          // Keep only delete button after archiving
           const deleteButton = ButtonBuilder.from(
             interaction.message.components[0].components[2]
           );
@@ -319,7 +318,6 @@ export default (Bot) => {
         return;
       }
 
-      // First, remove all buttons from the message
       await interaction.message.edit({
         embeds: [
           Utils.embed(
@@ -329,7 +327,7 @@ export default (Bot) => {
             ""
           ),
         ],
-        components: [], // Remove all buttons
+        components: [],
       });
 
       await interaction.followUp({
