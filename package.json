@@ -1,6 +1,6 @@
 {
   "name": "ticket-bot",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Discord Modals Simple Ticket Bot",
   "type": "module",
   "main": "src/index.js",
@@ -10,6 +10,6 @@
   "author": "thesleax",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "14.18.0"
+    "discord.js": "14.21.0"
   }
 }
