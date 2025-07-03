@@ -15,7 +15,7 @@ Now, there's a video tutorial to help you set up the bot! Watch it here: [YouTub
    ```
    This will install Yarn globally.
 
-2️⃣ Navigate to the bot’s directory, open a terminal, and install the required modules:
+2️⃣ Navigate to the bot's directory, open a terminal, and install the required modules:
    ```sh
    yarn install
    ```
@@ -27,4 +27,13 @@ Now, there's a video tutorial to help you set up the bot! Watch it here: [YouTub
    node src/index.js
    ```
    Alternatively, you can create a `.bat` file with the command above to start the bot without opening a terminal.
+
+## 📝 Changelog
+
+### Version 0.0.3 (July 3, 2025)
+- Added support for ticket creation with and without modals
+- Updated discord.js to version 14.21.0
+- Optimized codebase and removed redundant code structures
+- Enhanced error handling and logging system
+- Improved code organization and efficiency
 
