@@ -88,7 +88,11 @@ export default (Bot) => {
                 flags: MessageFlags.Ephemeral,
               });
 
+              const staffMentions = Config.TICKET.STAFF_ROLES.map(
+                (roleId) => `<@&${roleId}>`
+              ).join(", ");
               Channel.send({
+                content: staffMentions,
                 embeds: [
                   Utils.embed(
                     `Ticket Creator Member Information: \n${interaction.user} (\`${interaction.user.id}\`) \n${Content}`,
@@ -107,7 +111,80 @@ export default (Bot) => {
     if (!interaction.isButton()) return;
 
     if (interaction.customId === "ticket") {
-      await interaction.showModal(Utils.modal());
+      if (Config.TICKET.SHOW_MODAL) {
+        await interaction.showModal(Utils.modal());
+      } else {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+        const Channel = interaction.guild.channels.cache.find(
+          (x) => x.name === "ticket" + "-" + interaction.user.id
+        );
+
+        if (Channel) {
+          interaction.followUp({
+            content: `You already have a ticket request.`,
+            flags: MessageFlags.Ephemeral,
+          });
+          return;
+        }
+
+        let PermissionsArray = [
+          {
+            id: interaction.user.id,
+            allow: [
+              PermissionFlagsBits.ViewChannel,
+              PermissionFlagsBits.ReadMessageHistory,
+              PermissionFlagsBits.SendMessages,
+            ],
+          },
+          {
+            id: interaction.guild.id,
+            deny: [PermissionFlagsBits.ViewChannel],
+          },
+        ];
+
+        Config.TICKET.STAFF_ROLES.map((x) => {
+          PermissionsArray.push({
+            id: x,
+            allow: [
+              PermissionFlagsBits.ViewChannel,
+              PermissionFlagsBits.ReadMessageHistory,
+              PermissionFlagsBits.SendMessages,
+            ],
+          });
+        });
+
+        interaction.guild.channels
+          .create({
+            name: "ticket" + "-" + interaction.user.id,
+            type: ChannelType.GuildText,
+            parent: Config.TICKET.CATEGORY,
+            permissionOverwrites: PermissionsArray,
+          })
+          .then(async (Channel) => {
+            interaction.followUp({
+              content:
+                "Hey! Your ticket request has been successfully created.",
+              flags: MessageFlags.Ephemeral,
+            });
+
+            const staffMentions = Config.TICKET.STAFF_ROLES.map(
+              (roleId) => `<@&${roleId}>`
+            ).join(", ");
+            Channel.send({
+              content: staffMentions,
+              embeds: [
+                Utils.embed(
+                  `Ticket Creator Member Information: \n${interaction.user} (\`${interaction.user.id}\`)`,
+                  interaction.guild,
+                  Bot,
+                  interaction.user
+                ),
+              ],
+              components: [Utils.ticketButton()],
+            });
+          });
+      }
     }
 
     if (interaction.customId === "successTicket") {
@@ -179,7 +256,7 @@ export default (Bot) => {
           flags: MessageFlags.Ephemeral,
         });
 
-      if (interaction.channel.parentId === Config.TICKET.ARCHIVE_CATEGORY)
+      if (interaction.channel.name.startsWith("archive-"))
         return interaction.followUp({
           content: `This ticket is already archived.`,
           flags: MessageFlags.Ephemeral,
@@ -198,6 +275,12 @@ export default (Bot) => {
         .then(async (x) => {
           x.setName(interaction.channel.name.replace("ticket", "archive"));
 
+          // Keep only delete button after archiving
+          const deleteButton = ButtonBuilder.from(
+            interaction.message.components[0].components[2]
+          );
+          const newRow = new ActionRowBuilder().addComponents([deleteButton]);
+
           interaction.message.edit({
             embeds: [
               Utils.embed(
@@ -207,7 +290,7 @@ export default (Bot) => {
                 ""
               ),
             ],
-            components: [],
+            components: [newRow],
           });
 
           interaction.followUp({
@@ -220,35 +303,42 @@ export default (Bot) => {
     if (interaction.customId === "deleteTicket") {
       await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-      let User = interaction.channel.name.replace("ticket-", "");
+      const userId = interaction.channel.name.replace("ticket-", "");
+      const isTicketOwner = userId === interaction.user.id;
+      const isApproved =
+        interaction.message.components[0].components[0].data.disabled === true;
 
-      if ([User].includes(interaction.user.id)) {
-        if (
-          interaction.message.components[0].components[0].data.disabled === true
-        )
-          return interaction.followUp({
-            content: `The support request has been approved by the authorities, you can no longer delete it.`,
-            flags: MessageFlags.Ephemeral,
-          });
-      } else {
-        if (
-          !Config.TICKET.STAFF_ROLES.some((x) =>
-            interaction.member.roles.cache.has(x)
-          ) &&
-          ![interaction.guild.ownerId].includes(interaction.user.id)
-        )
-          return;
+      if (isTicketOwner && isApproved) {
+        return interaction.followUp({
+          content: `The support request has been approved by the authorities, you can no longer delete it.`,
+          flags: MessageFlags.Ephemeral,
+        });
       }
 
-      interaction.followUp({
+      if (!isTicketOwner && !Utils.isStaffMember(interaction.member)) {
+        return;
+      }
+
+      // First, remove all buttons from the message
+      await interaction.message.edit({
+        embeds: [
+          Utils.embed(
+            interaction.message.embeds.map((x) => x.description).join(""),
+            interaction.guild,
+            Bot,
+            ""
+          ),
+        ],
+        components: [], // Remove all buttons
+      });
+
+      await interaction.followUp({
         content: `Your request has been received successfully after \`5 seconds\` the channel will be deleted automatically.`,
         flags: MessageFlags.Ephemeral,
       });
 
       setTimeout(() => {
-        interaction.channel.delete().catch(() => {
-          return undefined;
-        });
+        interaction.channel.delete().catch(() => undefined);
       }, 1000 * 5);
     }
   });
