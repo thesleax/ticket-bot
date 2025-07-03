@@ -4,49 +4,55 @@ import Discord from "discord.js";
 const { ButtonStyle, PermissionsBitField } = Discord;
 
 export default (Bot) => {
-  Bot.on("messageCreate", (message) => {
-    const Prefix = message.content.toLowerCase().startsWith(Config.PREFIX);
+  Bot.on("messageCreate", async (message) => {
+    if (
+      !message.content.toLowerCase().startsWith(Config.PREFIX) ||
+      !message.guild
+    )
+      return;
 
-    if (!Prefix && !message.guild) return;
+    const [command, ...args] = message.content
+      .slice(Config.PREFIX.length)
+      .trim()
+      .split(/\s+/);
 
-    const Args = message.content.split(" ").slice(1);
-    const Command = message.content.split(" ")[0].slice(Config.PREFIX.length);
+    if (command !== "ticket") return;
 
-    if (Command === "ticket") {
-      if (
-        !message.member.permissions.has(PermissionsBitField.Flags.Administrator)
-      )
-        return message.reply({
-          content: "You are not permissions to use this command.",
-        });
-
-      message.delete().catch(() => {
-        return undefined;
+    if (
+      !message.member.permissions.has(PermissionsBitField.Flags.Administrator)
+    ) {
+      return message.reply({
+        content: "You are not permissions to use this command.",
       });
-
-      let TicketChannel = message.guild.channels.cache.get(
-        Config.TICKET.CHANNEL
-      );
-
-      if (!TicketChannel)
-        return message.reply({
-          content: "Please write ticket channel ID in config file.",
-        });
-
-      TicketChannel.send({
-        embeds: [Utils.embed(Config.TICKET.MESSAGE, message.guild, Bot, "")],
-        components: [
-          Utils.button(
-            ButtonStyle.Primary,
-            "Open Ticket!",
-            "🎫",
-            "ticket",
-            false
-          ),
-        ],
-      });
-
-      return message.channel.send(`Sended the message to ${TicketChannel}`);
     }
+
+    await message.delete().catch(() => undefined);
+
+    const ticketChannel = message.guild.channels.cache.get(
+      Config.TICKET.CHANNEL
+    );
+    if (!ticketChannel) {
+      return message.reply({
+        content: "Please write ticket channel ID in config file.",
+      });
+    }
+
+    await ticketChannel.send({
+      embeds: [Utils.embed(Config.TICKET.MESSAGE, message.guild, Bot, "")],
+      components: [
+        Utils.button(
+          ButtonStyle.Primary,
+          "Open Ticket!",
+          "🎫",
+          "ticket",
+          false
+        ),
+      ],
+    });
+
+    const reply = await message.channel.send(
+      `Sended the message to ${ticketChannel}`
+    );
+    setTimeout(() => reply.delete().catch(() => undefined), 1000);
   });
 };
