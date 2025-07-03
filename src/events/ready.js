@@ -8,7 +8,7 @@ export default (Bot) => {
       activities: [
         {
           name: Config.PRESENCE.NAME,
-          type: ActivityType[Config.PRESENCE.TYPE] || ActivityType.Playing,
+          type: ActivityType[Config.PRESENCE.TYPE],
         },
       ],
     });
