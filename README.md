@@ -2,6 +2,15 @@
 
 This is a bot infrastructure I created in my spare time. Initially, I made it for my own server, but I decided to share it with the community in hopes that it will be useful to others. Happy coding!
 
+## 📝 Changelog
+
+### Version 0.0.3 (July 3, 2025)
+- Added support for ticket creation with and without modals
+- Updated discord.js to version 14.21.0
+- Optimized codebase and removed redundant code structures
+- Enhanced error handling and logging system
+- Improved code organization and efficiency
+
 ## 🚀 Setup Guide
 Now, there's a video tutorial to help you set up the bot! Watch it here: [YouTube](https://youtu.be/gv94bxO-jo0)
 
@@ -27,13 +36,3 @@ Now, there's a video tutorial to help you set up the bot! Watch it here: [YouTub
    node src/index.js
    ```
    Alternatively, you can create a `.bat` file with the command above to start the bot without opening a terminal.
-
-## 📝 Changelog
-
-### Version 0.0.3 (July 3, 2025)
-- Added support for ticket creation with and without modals
-- Updated discord.js to version 14.21.0
-- Optimized codebase and removed redundant code structures
-- Enhanced error handling and logging system
-- Improved code organization and efficiency
-
