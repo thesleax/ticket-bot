@@ -1,4 +1,4 @@
-# 🎫 Discord Modals Simple Ticket Bot
+## 🎫 Discord Ticket Bot
 
 This is a bot infrastructure I created in my spare time. Initially, I made it for my own server, but I decided to share it with the community in hopes that it will be useful to others. Happy coding!
 
