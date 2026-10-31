@@ -87,6 +87,7 @@ To keep it running after you close the terminal, use a process manager such as [
 - New `LIMITS` option: a cooldown between a member's tickets (60 seconds by default, staff skip it) and a cap on open tickets, so nobody can flood the server with ticket channels
 - A full ticket or archive category (Discord allows 50 channels) now gets a clear message instead of "Something went wrong"
 - Configs without `LIMITS` keep working with the defaults
+- Fixed: with `LOCK_UNTIL_CONFIRMED` on, members could still write in their ticket through threads before staff confirmed it
 
 ### 1.0.0 (October 30, 2026)
 - Rewritten for discord.js 14.28: the `/ticket-panel` slash command replaces the prefix command, and forms use the new modal label components

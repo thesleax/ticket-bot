@@ -13,6 +13,9 @@ import config from "./config.js";
 
 const { ViewChannel, SendMessages, ReadMessageHistory, AttachFiles } = PermissionFlagsBits;
 const MEMBER_PERMS = [ViewChannel, SendMessages, ReadMessageHistory, AttachFiles];
+// A locked member could still write through threads, since @everyone has these permissions by default.
+const { CreatePublicThreads, CreatePrivateThreads, SendMessagesInThreads } = PermissionFlagsBits;
+const LOCKED_PERMS = [SendMessages, AttachFiles, CreatePublicThreads, CreatePrivateThreads, SendMessagesInThreads];
 const ephemeral = (content) => ({ content, flags: MessageFlags.Ephemeral });
 
 // Users whose ticket is being created right now: stops a double click from opening two channels.
@@ -134,7 +137,7 @@ async function openTicket(interaction, answers) {
         { id: guild.roles.everyone.id, deny: [ViewChannel] },
         { id: interaction.client.user.id, allow: [...MEMBER_PERMS, PermissionFlagsBits.ManageChannels] },
         config.LOCK_UNTIL_CONFIRMED
-          ? { id: user.id, allow: [ViewChannel, ReadMessageHistory], deny: [SendMessages, AttachFiles] }
+          ? { id: user.id, allow: [ViewChannel, ReadMessageHistory], deny: LOCKED_PERMS }
           : { id: user.id, allow: MEMBER_PERMS },
         ...config.STAFF_ROLE_IDS.map((id) => ({ id, allow: MEMBER_PERMS })),
       ],
@@ -166,7 +169,13 @@ export async function onApprove(interaction) {
   const owner = ownerOf(interaction.channel);
   if (!owner) return;
   // Unlocks LOCK_UNTIL_CONFIRMED tickets, and form tickets opened by versions before 1.0.0.
-  await interaction.channel.permissionOverwrites.edit(owner, { SendMessages: true, AttachFiles: true });
+  await interaction.channel.permissionOverwrites.edit(owner, {
+    SendMessages: true,
+    AttachFiles: true,
+    CreatePublicThreads: null,
+    CreatePrivateThreads: null,
+    SendMessagesInThreads: null,
+  });
   await interaction.channel.send({
     content: `<@${owner}>, your ticket was approved by ${interaction.user}.`,
     allowedMentions: { users: [owner] },
