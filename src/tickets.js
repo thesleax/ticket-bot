@@ -18,6 +18,13 @@ const ephemeral = (content) => ({ content, flags: MessageFlags.Ephemeral });
 // Users whose ticket is being created right now: stops a double click from opening two channels.
 const opening = new Set();
 
+// Throttling: stops a single user spamming ticket creations, and caps how many open tickets a
+// guild can have at once, so repeated/coordinated requests can't exhaust channel capacity or
+// trigger Discord API rate limits.
+const lastOpenedAt = new Map();
+const OPEN_COOLDOWN_MS = 30_000;
+const MAX_OPEN_TICKETS = 50;
+
 // Discord caps an embed description at 4096 characters (5 long answers can pass that).
 const embed = (description) =>
   new EmbedBuilder().setColor(config.COLOR).setDescription(description.slice(0, 4096)).setTimestamp();
