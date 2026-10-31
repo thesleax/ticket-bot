@@ -6,6 +6,7 @@ import {
   GatewayIntentBits,
   MessageFlags,
   PermissionFlagsBits,
+  RESTJSONErrorCodes,
   SlashCommandBuilder,
 } from "discord.js";
 import config from "./config.js";
@@ -17,6 +18,17 @@ if (missing.length) {
   console.error(`Fill in before starting: ${missing.join(", ")}. See README.md.`);
   process.exit(1);
 }
+const problems = tickets.configProblems();
+if (!(config.PRESENCE.TYPE in ActivityType)) problems.push(`PRESENCE.TYPE "${config.PRESENCE.TYPE}" is not one of the listed types.`);
+if (problems.length) {
+  console.error(`Fix in src/config.js:\n- ${problems.join("\n- ")}\nSee README.md.`);
+  process.exit(1);
+}
+
+const { ViewChannel, SendMessages, EmbedLinks, AttachFiles, ReadMessageHistory, ManageChannels, ManageRoles } = PermissionFlagsBits;
+// What the bot needs in the ticket categories: it can only give members permissions it has itself.
+const CATEGORY_PERMS = [ViewChannel, SendMessages, EmbedLinks, AttachFiles, ReadMessageHistory, ManageChannels, ManageRoles];
+const PANEL_PERMS = [ViewChannel, SendMessages, EmbedLinks];
 
 const panelCommand = new SlashCommandBuilder()
   .setName("ticket-panel")
@@ -49,6 +61,12 @@ client.once(Events.ClientReady, async (c) => {
   const roles = await guild.roles.fetch();
   const badRoles = config.STAFF_ROLE_IDS.filter((id) => !roles.has(id));
   if (badRoles.length) return stop(`STAFF_ROLE_IDS not found in ${guild.name}: ${badRoles.join(", ")}`);
+  if (config.STAFF_ROLE_IDS.includes(guild.id)) return stop("STAFF_ROLE_IDS contains @everyone, which would make every member staff.");
+
+  for (const key of ["CATEGORY_ID", "ARCHIVE_CATEGORY_ID"]) {
+    const lacking = channels.get(config[key]).permissionsFor(guild.members.me).missing(CATEGORY_PERMS);
+    if (lacking.length) console.warn(`Warning: the bot is missing ${lacking.join(", ")} in ${key}, so tickets will fail there. See README.md.`);
+  }
 
   await guild.commands.set([panelCommand]);
   console.log(`Logged in as ${c.user.tag}, /ticket-panel is ready in ${guild.name}.`);
@@ -58,6 +76,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.inCachedGuild()) return;
   try {
     if (interaction.isChatInputCommand() && interaction.commandName === "ticket-panel") {
+      const lacking = interaction.channel.permissionsFor(interaction.guild.members.me).missing(PANEL_PERMS);
+      if (lacking.length) {
+        return await interaction.reply({ content: `I need ${lacking.join(", ")} in this channel to post the panel.`, flags: MessageFlags.Ephemeral });
+      }
       await interaction.channel.send(tickets.panel());
       await interaction.reply({ content: "Ticket panel posted.", flags: MessageFlags.Ephemeral });
     } else if (interaction.isButton()) {
@@ -67,10 +89,25 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
   } catch (error) {
     console.error(error);
-    const reply = { content: "Something went wrong. Check the bot's permissions and config.", flags: MessageFlags.Ephemeral };
+    const reply = { content: explain(error), flags: MessageFlags.Ephemeral };
     await (interaction.deferred || interaction.replied ? interaction.followUp(reply) : interaction.reply(reply)).catch(() => {});
   }
 });
+
+// Turns the Discord errors self-hosters hit most into something they can act on.
+function explain(error) {
+  switch (error.code) {
+    case RESTJSONErrorCodes.MissingPermissions:
+    case RESTJSONErrorCodes.MissingAccess:
+      return "The bot is missing a permission for this. Ask an admin to check its role and the ticket categories (see README.md).";
+    case RESTJSONErrorCodes.InvalidFormBodyOrContentType:
+      return `Discord rejected a text or emoji from config.js: ${error.message.split("\n").slice(1).join(" ")}`;
+    case RESTJSONErrorCodes.MaximumNumberOfGuildChannelsReached:
+      return "This server has reached Discord's channel limit (500). Delete old channels to open new tickets.";
+    default:
+      return "Something went wrong. Check the bot's permissions and config.";
+  }
+}
 
 client.on(Events.Error, console.error);
 process.on("unhandledRejection", console.error);

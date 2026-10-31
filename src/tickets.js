@@ -30,15 +30,20 @@ const MAX_TICKETS = Math.min(MAX_OPEN_TICKETS, CATEGORY_MAX);
 // When each member last opened a ticket. Entries remove themselves when the cooldown ends.
 const lastOpened = new Map();
 
-// Discord caps an embed description at 4096 characters (5 long answers can pass that).
+// Discord caps an embed description at 4096 characters (5 long answers can pass that), and rejects an empty one.
 const embed = (description) =>
-  new EmbedBuilder().setColor(config.COLOR).setDescription(description.slice(0, 4096)).setTimestamp();
+  new EmbedBuilder().setColor(config.COLOR).setDescription(description.slice(0, 4096) || null).setTimestamp();
 
 // Same ids as before 1.0.0, so panels and tickets posted by older versions keep working.
 export const IDS = { OPEN: "ticket", FORM: "ticket", APPROVE: "successTicket", ARCHIVE: "archiveTicket", DELETE: "deleteTicket" };
 
-const button = (id, { LABEL, EMOJI, STYLE }) =>
-  new ButtonBuilder().setCustomId(id).setLabel(LABEL).setStyle(STYLE).setEmoji(EMOJI);
+// A button needs a label, an emoji, or both.
+function button(id, { LABEL, EMOJI, STYLE }) {
+  const b = new ButtonBuilder().setCustomId(id).setStyle(STYLE);
+  if (LABEL) b.setLabel(LABEL);
+  if (EMOJI) b.setEmoji(EMOJI);
+  return b;
+}
 
 const { APPROVE, ARCHIVE, DELETE } = config.TICKET_BUTTONS;
 const ticketButtons = ({ approved = false } = {}) =>
@@ -74,10 +79,39 @@ function cantOpen(member) {
   }
 }
 
+// Mistakes in config.js that would otherwise only show up when someone clicks. Checked at startup.
+export function configProblems() {
+  const problems = [];
+  if (!(Number.isFinite(COOLDOWN_SECONDS) && COOLDOWN_SECONDS >= 0)) problems.push("LIMITS.COOLDOWN_SECONDS must be 0 or more.");
+  if (!(Number.isInteger(MAX_OPEN_TICKETS) && MAX_OPEN_TICKETS >= 1)) problems.push("LIMITS.MAX_OPEN_TICKETS must be 1 or more.");
+  const parts = [
+    ["PANEL", () => panel().components[0].toJSON()],
+    ["TICKET_BUTTONS", () => ticketButtons().toJSON()],
+  ];
+  if (config.SHOW_MODAL && config.QUESTIONS.length) {
+    const ids = config.QUESTIONS.map((q) => q.ID);
+    if (ids.length > 5) problems.push("QUESTIONS can have at most 5 questions (a Discord limit).");
+    if (new Set(ids).size !== ids.length || ids.some((id) => !id)) problems.push("Every question in QUESTIONS needs its own ID.");
+    for (const q of config.QUESTIONS) {
+      if ((q.MIN_LENGTH ?? 0) > (q.MAX_LENGTH ?? 1000)) problems.push(`QUESTIONS "${q.ID}": MIN_LENGTH is above MAX_LENGTH.`);
+    }
+    parts.push(["QUESTIONS", () => form().toJSON()]);
+  }
+  for (const [key, build] of parts) {
+    try {
+      build();
+    } catch {
+      problems.push(`${key}: a text is empty or too long, or a style is wrong (titles up to 256 characters, button labels 80, question labels 45, MAX_LENGTH 4000).`);
+    }
+  }
+  return problems;
+}
+
 export function panel() {
   const { TITLE, DESCRIPTION, BUTTON } = config.PANEL;
   return {
-    embeds: [embed(DESCRIPTION).setTitle(TITLE || null).setTimestamp(null)],
+    // Discord rejects an empty embed, so a panel without title and text is just the button.
+    embeds: TITLE || DESCRIPTION ? [embed(DESCRIPTION).setTitle(TITLE || null).setTimestamp(null)] : [],
     components: [new ActionRowBuilder().addComponents(button(IDS.OPEN, BUTTON))],
   };
 }

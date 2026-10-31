@@ -13,7 +13,7 @@ Members press a button, optionally fill in a short form, and get a private chann
 - **Spam protection**: a cooldown between tickets and a cap on open tickets, both set in `config.js`
 - Needs only the `Guilds` intent: no privileged intents, no message content access
 - Errors are logged and answered in Discord instead of crashing the bot
-- Checks your ids at startup and tells you exactly which one is wrong
+- Checks your ids, settings and the bot's permissions at startup and tells you exactly what is wrong
 
 ## Setup
 
@@ -88,6 +88,10 @@ To keep it running after you close the terminal, use a process manager such as [
 - A full ticket or archive category (Discord allows 50 channels) now gets a clear message instead of "Something went wrong"
 - Configs without `LIMITS` keep working with the defaults
 - Fixed: with `LOCK_UNTIL_CONFIRMED` on, members could still write in their ticket through threads before staff confirmed it
+- `config.js` mistakes (too many questions, duplicate question ids, texts too long, a wrong presence type, @everyone as a staff role) are reported at startup instead of when someone clicks
+- Missing bot permissions in the ticket categories are reported at startup, and `/ticket-panel` says which permission it lacks in a channel
+- Clearer error messages for missing permissions, a rejected text or emoji, and a full server
+- Fixed: an empty panel `DESCRIPTION` broke `/ticket-panel`. Buttons can now be emoji-only by leaving `LABEL` empty
 
 ### 1.0.0 (October 30, 2026)
 - Rewritten for discord.js 14.28: the `/ticket-panel` slash command replaces the prefix command, and forms use the new modal label components
