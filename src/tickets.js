@@ -18,6 +18,15 @@ const ephemeral = (content) => ({ content, flags: MessageFlags.Ephemeral });
 // Users whose ticket is being created right now: stops a double click from opening two channels.
 const opening = new Set();
 
+// Discord fits at most 50 channels in one category, so a full category can't take another ticket.
+const CATEGORY_MAX = 50;
+// Configs from before 1.1.0 have no LIMITS, so these defaults apply to them.
+const { COOLDOWN_SECONDS = 60, MAX_OPEN_TICKETS = CATEGORY_MAX } = config.LIMITS ?? {};
+const COOLDOWN_MS = COOLDOWN_SECONDS * 1000;
+const MAX_TICKETS = Math.min(MAX_OPEN_TICKETS, CATEGORY_MAX);
+// When each member last opened a ticket. Entries remove themselves when the cooldown ends.
+const lastOpened = new Map();
+
 // Discord caps an embed description at 4096 characters (5 long answers can pass that).
 const embed = (description) =>
   new EmbedBuilder().setColor(config.COLOR).setDescription(description.slice(0, 4096)).setTimestamp();
@@ -44,6 +53,23 @@ const ownerOf = (channel) => channel.name.match(/^(?:ticket|archive)-(\d+)$/)?.[
 
 const openTicketOf = (guild, userId) =>
   guild.channels.cache.find((c) => c.parentId === config.CATEGORY_ID && c.name === `ticket-${userId}`);
+
+const channelsIn = (guild, categoryId) => guild.channels.cache.filter((c) => c.parentId === categoryId).size;
+
+// Why this member can't open a ticket right now, or undefined when they can.
+// Checked before the channel exists, so many members clicking in the same second can pass
+// MAX_OPEN_TICKETS by a few. Discord's 50 per category still stops them.
+function cantOpen(member) {
+  const existing = openTicketOf(member.guild, member.id);
+  if (existing) return `You already have an open ticket: ${existing}`;
+  if (channelsIn(member.guild, config.CATEGORY_ID) >= MAX_TICKETS) {
+    return "All ticket slots are taken right now. Please try again a little later.";
+  }
+  const readyAt = (lastOpened.get(member.id) ?? 0) + COOLDOWN_MS;
+  if (readyAt > Date.now() && !isStaff(member)) {
+    return `You opened a ticket a moment ago. You can open another <t:${Math.ceil(readyAt / 1000)}:R>.`;
+  }
+}
 
 export function panel() {
   const { TITLE, DESCRIPTION, BUTTON } = config.PANEL;
@@ -76,8 +102,8 @@ function form() {
 
 // "Open ticket" button: show the form, or open the ticket straight away when SHOW_MODAL is off.
 export async function onOpenButton(interaction) {
-  const existing = openTicketOf(interaction.guild, interaction.user.id);
-  if (existing) return interaction.reply(ephemeral(`You already have an open ticket: ${existing}`));
+  const reason = cantOpen(interaction.member);
+  if (reason) return interaction.reply(ephemeral(reason));
   if (config.SHOW_MODAL && config.QUESTIONS.length) return interaction.showModal(form());
   return openTicket(interaction, []);
 }
@@ -96,8 +122,9 @@ async function openTicket(interaction, answers) {
   opening.add(user.id);
   try {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-    const existing = openTicketOf(guild, user.id);
-    if (existing) return await interaction.editReply(`You already have an open ticket: ${existing}`);
+    // Checked again: the form may have been open for a while.
+    const reason = cantOpen(interaction.member);
+    if (reason) return await interaction.editReply(reason);
 
     const channel = await guild.channels.create({
       name: `ticket-${user.id}`,
@@ -112,6 +139,10 @@ async function openTicket(interaction, answers) {
         ...config.STAFF_ROLE_IDS.map((id) => ({ id, allow: MEMBER_PERMS })),
       ],
     });
+    if (COOLDOWN_MS > 0) {
+      lastOpened.set(user.id, Date.now());
+      setTimeout(() => lastOpened.delete(user.id), COOLDOWN_MS).unref();
+    }
 
     const lines = [`**Opened by** ${user} (\`${user.id}\`)`];
     for (const { question, answer } of answers) lines.push(`\n**${question}**\n${answer}`);
@@ -146,6 +177,9 @@ export async function onArchive(interaction) {
   const { channel } = interaction;
   if (!isStaff(interaction.member)) return interaction.reply(ephemeral("Only staff can archive tickets."));
   if (channel.parentId === config.ARCHIVE_CATEGORY_ID) return interaction.reply(ephemeral("This ticket is already archived."));
+  if (channelsIn(interaction.guild, config.ARCHIVE_CATEGORY_ID) >= CATEGORY_MAX) {
+    return interaction.reply(ephemeral("The archive category is full (Discord allows 50 channels). Delete some archived tickets first."));
+  }
 
   await interaction.deferReply({ flags: MessageFlags.Ephemeral });
   const owner = ownerOf(channel);

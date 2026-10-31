@@ -1,6 +1,6 @@
 {
   "name": "ticket-bot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Discord support ticket bot: a panel button, an optional form, private ticket channels with approve, archive and delete.",
   "type": "module",

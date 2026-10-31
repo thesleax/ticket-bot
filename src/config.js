@@ -33,6 +33,11 @@ export default {
   // true: the member can read their ticket but only write after staff press Confirm. Works with and without the form.
   LOCK_UNTIL_CONFIRMED: false,
 
+  // Spam protection.
+  // COOLDOWN_SECONDS: how long a member waits after opening a ticket before opening another. 0 turns it off. Staff skip it.
+  // MAX_OPEN_TICKETS: how many channels CATEGORY_ID can hold before new tickets are refused. Discord's own limit is 50.
+  LIMITS: { COOLDOWN_SECONDS: 60, MAX_OPEN_TICKETS: 50 },
+
   // true: members fill in the QUESTIONS form before the ticket opens. false: the ticket opens with one click.
   SHOW_MODAL: false,
 

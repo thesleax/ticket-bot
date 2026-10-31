@@ -10,6 +10,7 @@ Members press a button, optionally fill in a short form, and get a private chann
 - **Private channels**: only the member, your staff roles and the server owner can see them
 - **Confirm, archive, delete** buttons for staff. Members can delete their own ticket until staff approve it
 - **One open ticket per member**, and a double click never opens two
+- **Spam protection**: a cooldown between tickets and a cap on open tickets, both set in `config.js`
 - Needs only the `Guilds` intent: no privileged intents, no message content access
 - Errors are logged and answered in Discord instead of crashing the bot
 - Checks your ids at startup and tells you exactly which one is wrong
@@ -58,6 +59,7 @@ Then fill in `src/config.js` (turn on **Developer Mode** in Discord to copy ids 
 | `PANEL` | Title, text and button (label, emoji, color) of the ticket panel |
 | `TICKET_BUTTONS` | Label, emoji and color of the Confirm, Archive and Delete buttons |
 | `LOCK_UNTIL_CONFIRMED` | `true`: members can read their ticket but write only after staff press Confirm. Works with or without the form |
+| `LIMITS` | `COOLDOWN_SECONDS`: wait after opening a ticket before opening another (`0` = off, staff skip it). `MAX_OPEN_TICKETS`: channels the ticket category can hold before new tickets are refused (Discord allows 50) |
 | `SHOW_MODAL` | `false`: tickets open with one click. `true`: members fill in the form first |
 | `QUESTIONS` | The questions of that form: label, style, min/max length, placeholder, required |
 | `COLOR` | Embed color |
@@ -80,6 +82,11 @@ To keep it running after you close the terminal, use a process manager such as [
 4. **Archive** moves the channel to the archive category and removes the member's access. **Delete** removes the channel after 5 seconds.
 
 ## Changelog
+
+### 1.1.0 (October 31, 2026)
+- New `LIMITS` option: a cooldown between a member's tickets (60 seconds by default, staff skip it) and a cap on open tickets, so nobody can flood the server with ticket channels
+- A full ticket or archive category (Discord allows 50 channels) now gets a clear message instead of "Something went wrong"
+- Configs without `LIMITS` keep working with the defaults
 
 ### 1.0.0 (October 30, 2026)
 - Rewritten for discord.js 14.28: the `/ticket-panel` slash command replaces the prefix command, and forms use the new modal label components
