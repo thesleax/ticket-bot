@@ -1,38 +1,103 @@
-## 🎫 Discord Ticket Bot
+# 🎫 Discord Ticket Bot
 
-This is a bot infrastructure I created in my spare time. Initially, I made it for my own server, but I decided to share it with the community in hopes that it will be useful to others. Happy coding!
+A small, self-hosted support ticket bot for one Discord server, built on **discord.js v14** (latest).
+Members press a button, optionally fill in a short form, and get a private channel with your staff.
 
-## 📝 Changelog
+## Features
 
-### Version 0.0.3 (July 3, 2025)
-- Added support for ticket creation with and without modals
-- Updated discord.js to version 14.21.0
-- Optimized codebase and removed redundant code structures
-- Enhanced error handling and logging system
-- Improved code organization and efficiency
+- **Ticket panel** posted with the `/ticket-panel` slash command
+- **One-click tickets**, or an optional form (up to 5 questions) before a ticket opens
+- **Private channels**: only the member, your staff roles and the server owner can see them
+- **Confirm, archive, delete** buttons for staff. Members can delete their own ticket until staff approve it
+- **One open ticket per member**, and a double click never opens two
+- Needs only the `Guilds` intent: no privileged intents, no message content access
+- Errors are logged and answered in Discord instead of crashing the bot
+- Checks your ids at startup and tells you exactly which one is wrong
 
-## 🚀 Setup Guide
-Now, there's a video tutorial to help you set up the bot! Watch it here: [YouTube](https://youtu.be/gv94bxO-jo0)
+## Setup
 
-### Prerequisites
-📌 You must have **Node.js** installed on your computer. If you haven't installed it yet, download it from [here](https://nodejs.org).
+### 1. Create the bot
 
-### Installation Steps
-1️⃣ Open a terminal and run:
-   ```sh
-   npm install -g yarn
+1. Open the [Discord Developer Portal](https://discord.com/developers/applications), create an application and copy the token from the **Bot** page.
+2. Invite it with this link, replacing `CLIENT_ID` with your application id:
+
    ```
-   This will install Yarn globally.
-
-2️⃣ Navigate to the bot's directory, open a terminal, and install the required modules:
-   ```sh
-   yarn install
+   https://discord.com/oauth2/authorize?client_id=CLIENT_ID&scope=bot+applications.commands&permissions=268553232
    ```
 
-3️⃣ Open the **config.js** file and fill in the necessary details.
+   That grants View Channels, Send Messages, Embed Links, Attach Files, Read Message History, Manage Channels and Manage Roles.
+   The bot's role must sit **above** your staff roles, and the staff roles must be mentionable if you want them pinged.
 
-4️⃣ Once everything is set up, start the bot by running:
-   ```sh
-   node src/index.js
-   ```
-   Alternatively, you can create a `.bat` file with the command above to start the bot without opening a terminal.
+### 2. Install
+
+You need [Node.js](https://nodejs.org) 22.12 or newer.
+
+```sh
+git clone https://github.com/thesleax/ticket-bot.git
+cd ticket-bot
+npm install
+```
+
+### 3. Configure
+
+Copy `.env.example` to `.env` and put your token in it:
+
+```
+TOKEN=your-bot-token
+```
+
+Then fill in `src/config.js` (turn on **Developer Mode** in Discord to copy ids with right click):
+
+| Setting | What it is |
+|---|---|
+| `GUILD_ID` | Your server's id |
+| `CATEGORY_ID` | Category new tickets are created in |
+| `ARCHIVE_CATEGORY_ID` | Category archived tickets are moved to |
+| `STAFF_ROLE_IDS` | Roles that handle tickets, e.g. `["123", "456"]` |
+| `PRESENCE` | The bot's status text |
+| `PANEL` | Title, text and button (label, emoji, color) of the ticket panel |
+| `TICKET_BUTTONS` | Label, emoji and color of the Confirm, Archive and Delete buttons |
+| `LOCK_UNTIL_CONFIRMED` | `true`: members can read their ticket but write only after staff press Confirm. Works with or without the form |
+| `SHOW_MODAL` | `false`: tickets open with one click. `true`: members fill in the form first |
+| `QUESTIONS` | The questions of that form: label, style, min/max length, placeholder, required |
+| `COLOR` | Embed color |
+
+### 4. Run
+
+```sh
+npm start
+```
+
+In the channel where members should open tickets, run `/ticket-panel` (administrators only).
+
+To keep it running after you close the terminal, use a process manager such as [pm2](https://pm2.keymetrics.io): `pm2 start npm --name ticket-bot -- start`.
+
+## How a ticket works
+
+1. A member presses **Open ticket** (and answers the form when `SHOW_MODAL` is on).
+2. The bot creates `ticket-<user id>` in your ticket category and pings your staff roles.
+3. Staff press **Confirm** to take the ticket. After that, only staff can delete it, and with `LOCK_UNTIL_CONFIRMED` on the member can start writing.
+4. **Archive** moves the channel to the archive category and removes the member's access. **Delete** removes the channel after 5 seconds.
+
+## Changelog
+
+### 1.0.0 (October 30, 2026)
+- Rewritten for discord.js 14.28: the `/ticket-panel` slash command replaces the prefix command, and forms use the new modal label components
+- Only the `Guilds` intent is needed now. The privileged Message Content and Server Members intents are no longer required
+- The token moved to `.env`
+- Fixed: one failed Discord request could crash the bot
+- Fixed: double clicks opened two tickets
+- Fixed: the Delete button never answered members who weren't allowed to use it
+- Fixed: an empty prefix answered every "ticket" message
+- Removed duplicated and unused code
+- Panels and tickets posted by older versions keep working after the update
+- New `LOCK_UNTIL_CONFIRMED` option: members write only after staff confirm, with or without the form
+- Your ids are checked at startup, and the bot shuts down cleanly on Ctrl+C
+
+### 0.0.3 (July 3, 2025)
+- Ticket creation with and without a modal
+- discord.js 14.21.0
+
+## License
+
+[MIT](LICENSE)
