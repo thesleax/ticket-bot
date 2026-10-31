@@ -30,7 +30,7 @@ Members press a button, optionally fill in a short form, and get a private chann
 
 ### 2. Install
 
-You need [Node.js](https://nodejs.org) 22.12 or newer.
+You need the current LTS version of [Node.js](https://nodejs.org).
 
 ```sh
 git clone https://github.com/thesleax/ticket-bot.git
